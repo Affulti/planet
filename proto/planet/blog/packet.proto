@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package planet.blog;
+
+option go_package = "planet/x/blog/types";
+
+message BlogPacketData {
+  oneof packet {
+    NoData               noData           = 1;
+    IbcPostPacketData    ibcPostPacket    = 2;
+    UpdatePostPacketData updatePostPacket = 3;
+  }
+}
+
+message NoData {}
+
+// IbcPostPacketData defines a struct for the packet payload
+message IbcPostPacketData {
+  string title   = 1;
+  string content = 2;
+  string creator = 3;
+}
+
+// IbcPostPacketAck defines a struct for the packet acknowledgment
+message IbcPostPacketAck {
+  string postID = 1;
+}
+
+// UpdatePostPacketData defines a struct for the packet payload
+message UpdatePostPacketData {
+  string postID  = 1;
+  string title   = 2;
+  string content = 3;
+}
+
+// UpdatePostPacketAck defines a struct for the packet acknowledgment
+message UpdatePostPacketAck {
+  string postID = 1;
+}
+

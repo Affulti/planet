@@ -1,0 +1,38 @@
+FROM --platform=linux ubuntu:22.04
+ARG BUILDARCH
+
+# Change your versions here
+ENV GO_VERSION=1.20.2
+ENV IGNITE_VERSION=0.26.1
+ENV NODE_VERSION=16.x
+
+ENV LOCAL=/usr/local
+ENV GOROOT=$LOCAL/go
+ENV HOME=/root
+ENV GOPATH=$HOME/go
+ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+
+RUN mkdir -p $GOPATH/bin
+
+ENV PACKAGES curl gcc jq
+#  在apt-get update之前，将软件包源更改为阿里云的镜像源
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+RUN apt-get update
+RUN apt-get install -y $PACKAGES
+# RUN apt-get install -y curl gcc jq
+
+
+# Install Go
+RUN curl -L https://go.dev/dl/go${GO_VERSION}.linux-$BUILDARCH.tar.gz | tar -C $LOCAL -xzf -
+
+# Install Ignite
+RUN curl -L https://get.ignite.com/cli@v${IGNITE_VERSION}! | bash
+
+# Install Node
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION} | bash -
+RUN apt-get install -y nodejs
+
+EXPOSE 1317 4500 26657 1318 4501 26658
+
+WORKDIR /planet
